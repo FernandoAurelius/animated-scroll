@@ -1,0 +1,156 @@
+<!-- Baseado no vídeo "Subtle, yet Beautiful Scroll Animations" (https://www.youtube.com/watch?v=T33NN_pPeNI)-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Scroll</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #131316;
+            color: #fff;
+            padding: 0;
+            margin: 0;
+        }
+
+        section {
+            display: grid;
+            place-items: center;
+            align-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Usaremos transições para animar nossos elementos com scroll */
+        .hidden {
+            opacity: 0;
+            /* Para deixar o elemento invisível */
+            transition: all 1s;
+            filter: blur(5px);
+            transform: translateX(-100%);
+        }
+
+        .show {
+            opacity: 1;
+            /* Para deixar o elemento visível */
+            filter: blur(0);
+            transform: translateX(0);
+        }
+
+        @media(prefers-reduced-motion) {
+            .hidden {
+                transition: none;
+                filter: none;
+                transform: none;
+            }
+
+            .show {
+                filter: none;
+                transform: none;
+            }
+        }
+
+        /* Também é possível adicionar o transition delay usando :nth-child()
+        * :nth-child() é um seletor CSS que seleciona elementos com base em sua posição em um grupo de irmãos.
+        * ---
+        * Porém, não precisamos fazer isso pois já adicionamos dinamicamente no JS
+        */
+        .logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .logo img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            margin: 10px;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hidden">
+        <h1>Oi mãe</h1>
+        <p>Esse é meu website</p>
+    </section>
+    <section class="hidden">
+        <h2>Compre meu produto</h2>
+        <p style="text-align: center;">
+            As coisas que você possui acabam possuindo você.
+            É apenas depois de perder tudo que você está livre para fazer qualquer coisa
+        </p>
+    </section>
+    <section class="hidden">
+        <h2>É muito bom</h2>
+        <div class="logos">
+            <div class="logo hidden">
+                <img src="./assets/avatartion.png">
+            </div>
+            <div class="logo hidden">
+                <img src="./assets/avatartion (1).png">
+            </div>
+            <div class="logo hidden">
+                <img src="./assets/avatartion (2).png">
+            </div>
+            <div class="logo hidden">
+                <img src="./assets/avatartion (3).png">
+            </div>
+        </div>
+    </section>
+    <section class="hidden">
+        <h2>Obrigado!</h2>
+    </section>
+
+        <!-- 
+    O atributo "defer" garante que o script é executado depois que os 
+    elementos HTML estejam disponíveis na tela. 
+    -->
+    <script defer>
+        // Toda a base na observação do scroll da janela utilizando o objeto IntersectionObserver:
+        /*
+        * O objeto IntersectionObserver é utilizado para observar mudanças 
+        * na interseção de um elemento com um elemento pai,
+        * ou com o viewport do documento. 
+        * ---
+        * O elemento pai é o elemento mais próximo que tem um overflow 
+        * diferente de "visible".
+        * ---
+        * Analogamente, imagine que você está observando uma janela (viewport) 
+        * e quer saber quando um pássaro (elemento) entra ou sai do seu campo de visão. 
+        * O IntersectionObserver é como um par de binóculos que te avisa 
+        * quando o pássaro está visível ou não.
+        */
+        const hiddenElements = document.querySelectorAll(".hidden");
+
+        // Recebe uma função callback e um objeto de opções
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("show");
+                } else {
+                    entry.target.classList.remove("show");
+                }
+            });
+        });
+
+        // Depois de criado, basta chamar o método observe() para indicar o que deve ser observado
+        hiddenElements.forEach((element, i) => {
+            // Aproveitamos para adicionar uma propriedade CSS que usaremos futuramente
+            element.style.transitionDelay = i * 200 + "ms";
+            observer.observe(element);
+        });
+
+        // Isso é tudo de que precisamos com JS, as animações ficam por conta do CSS tranquilamente
+    </script>
+</body>
+
+</html>
